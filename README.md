@@ -52,7 +52,7 @@ learnable-positional-encoding/
 ### Local Setup
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/learnable-positional-encoding.git
+git clone https://github.com/hyunsule3/learnable-positional-encoding.git
 cd learnable-positional-encoding
 
 # Install dependencies
