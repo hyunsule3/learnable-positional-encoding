@@ -25,8 +25,11 @@ def compute_similarity_matrix(
     Returns:
         Similarity matrix of shape (seq_length, seq_length).
     """
-    # Create dummy input with zeros
-    dummy_input = torch.zeros(1, seq_length, d_model)
+    # Get device from model
+    device = next(pos_encoding.parameters()).device
+    
+    # Create dummy input with zeros on the same device
+    dummy_input = torch.zeros(1, seq_length, d_model, device=device)
     
     with torch.no_grad():
         # Get the positional encoding output
@@ -94,8 +97,11 @@ def get_encoding_stats(
     Returns:
         Dictionary with statistics.
     """
-    # Create dummy input
-    dummy_input = torch.zeros(1, seq_length, d_model)
+    # Get device from model
+    device = next(pos_encoding.parameters()).device
+    
+    # Create dummy input on the same device
+    dummy_input = torch.zeros(1, seq_length, d_model, device=device)
     
     with torch.no_grad():
         # Get the positional encoding output
@@ -138,13 +144,16 @@ def test_generalization(
     if test_lengths is None:
         test_lengths = [150, 200, 300]
     
+    # Get device from model
+    device = next(pos_encoding.parameters()).device
+    
     results = {
         "train_length": train_length,
         "test_results": {}
     }
     
     # Get training encodings
-    dummy_train = torch.zeros(1, train_length, d_model)
+    dummy_train = torch.zeros(1, train_length, d_model, device=device)
     with torch.no_grad():
         output_train = pos_encoding(dummy_train)  # (1, train_length, d_model)
         pe_train = output_train - dummy_train  # (1, train_length, d_model)
@@ -156,7 +165,7 @@ def test_generalization(
     
     # Test on longer sequences
     for test_len in test_lengths:
-        dummy_test = torch.zeros(1, test_len, d_model)
+        dummy_test = torch.zeros(1, test_len, d_model, device=device)
         with torch.no_grad():
             output_test = pos_encoding(dummy_test)  # (1, test_len, d_model)
             pe_test = output_test - dummy_test  # (1, test_len, d_model)
@@ -198,8 +207,11 @@ def visualize_positional_encoding(
     Returns:
         Matplotlib figure object.
     """
-    # Create dummy input
-    dummy_input = torch.zeros(1, seq_length, d_model)
+    # Get device from model
+    device = next(pos_encoding.parameters()).device
+    
+    # Create dummy input on the same device
+    dummy_input = torch.zeros(1, seq_length, d_model, device=device)
     
     with torch.no_grad():
         # Get the positional encoding output
@@ -303,8 +315,11 @@ def compare_encodings(
         axes = [axes]
     
     for idx, (name, encoding) in enumerate(encodings_dict.items()):
+        # Get device from model
+        device = next(encoding.parameters()).device
+        
         # Get encodings
-        dummy_input = torch.zeros(1, seq_length, d_model)
+        dummy_input = torch.zeros(1, seq_length, d_model, device=device)
         with torch.no_grad():
             output = encoding(dummy_input)  # (1, seq_length, d_model)
             pe = output - dummy_input  # (1, seq_length, d_model)
