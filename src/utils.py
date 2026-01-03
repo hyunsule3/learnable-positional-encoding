@@ -9,43 +9,6 @@ import matplotlib.pyplot as plt
 from typing import Dict, Tuple, Optional, Any
 
 
-def compute_similarity_matrix(
-    pos_encoding: nn.Module,
-    seq_length: int = 100,
-    d_model: int = 512
-) -> torch.Tensor:
-    """
-    Compute cosine similarity between positional encodings at different positions.
-    
-    Args:
-        pos_encoding: The positional encoding module.
-        seq_length: Sequence length to analyze.
-        d_model: Model dimension.
-    
-    Returns:
-        Similarity matrix of shape (seq_length, seq_length).
-    """
-    # Get device from model
-    device = next(pos_encoding.parameters()).device
-    
-    # Create dummy input with zeros on the same device
-    dummy_input = torch.zeros(1, seq_length, d_model, device=device)
-    
-    with torch.no_grad():
-        # Get the positional encoding output
-        output = pos_encoding(dummy_input)  # (1, seq_length, d_model)
-        
-        # Extract positional encodings by subtracting the input
-        pe = output - dummy_input  # (1, seq_length, d_model)
-        pe = pe.squeeze(0)  # (seq_length, d_model)
-    
-    # Normalize for cosine similarity
-    pe_normalized = torch.nn.functional.normalize(pe, p=2, dim=1)
-    
-    # Compute cosine similarity
-    similarity = torch.mm(pe_normalized, pe_normalized.t())
-    
-    return similarity
 
 
 def compute_orthogonality(
@@ -237,44 +200,6 @@ def visualize_positional_encoding(
     axes[1].set_ylabel("L2 Norm")
     axes[1].set_title("Encoding Norm per Position")
     axes[1].grid(True, alpha=0.3)
-    
-    plt.tight_layout()
-    
-    if save_path is not None:
-        fig.savefig(save_path, dpi=300, bbox_inches="tight")
-    
-    return fig
-
-
-def visualize_similarity_matrix(
-    pos_encoding: nn.Module,
-    seq_length: int = 100,
-    d_model: int = 512,
-    figsize: Tuple[int, int] = (8, 7),
-    save_path: Optional[str] = None
-) -> plt.Figure:
-    """
-    Visualize cosine similarity matrix of positional encodings.
-    
-    Args:
-        pos_encoding: The positional encoding module.
-        seq_length: Sequence length to analyze.
-        d_model: Model dimension.
-        figsize: Figure size.
-        save_path: Optional path to save the figure.
-    
-    Returns:
-        Matplotlib figure object.
-    """
-    similarity = compute_similarity_matrix(pos_encoding, seq_length, d_model)
-    
-    fig, ax = plt.subplots(figsize=figsize)
-    
-    im = ax.imshow(similarity.cpu().numpy(), cmap="coolwarm", vmin=-1, vmax=1)
-    ax.set_xlabel("Position")
-    ax.set_ylabel("Position")
-    ax.set_title("Cosine Similarity Between Positional Encodings")
-    plt.colorbar(im, ax=ax)
     
     plt.tight_layout()
     
