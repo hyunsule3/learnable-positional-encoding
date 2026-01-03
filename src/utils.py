@@ -25,11 +25,16 @@ def compute_similarity_matrix(
     Returns:
         Similarity matrix of shape (seq_length, seq_length).
     """
-    # Create dummy input
+    # Create dummy input with zeros
     dummy_input = torch.zeros(1, seq_length, d_model)
     
     with torch.no_grad():
-        pe = pos_encoding(dummy_input).squeeze(0)  # (seq_length, d_model)
+        # Get the positional encoding output
+        output = pos_encoding(dummy_input)  # (1, seq_length, d_model)
+        
+        # Extract positional encodings by subtracting the input
+        pe = output - dummy_input  # (1, seq_length, d_model)
+        pe = pe.squeeze(0)  # (seq_length, d_model)
     
     # Normalize for cosine similarity
     pe_normalized = torch.nn.functional.normalize(pe, p=2, dim=1)
@@ -93,7 +98,11 @@ def get_encoding_stats(
     dummy_input = torch.zeros(1, seq_length, d_model)
     
     with torch.no_grad():
-        pe = pos_encoding(dummy_input).squeeze(0)  # (seq_length, d_model)
+        # Get the positional encoding output
+        output = pos_encoding(dummy_input)  # (1, seq_length, d_model)
+        # Extract positional encodings by subtracting the input
+        pe = output - dummy_input  # (1, seq_length, d_model)
+        pe = pe.squeeze(0)  # (seq_length, d_model)
     
     # Compute statistics
     stats = {
@@ -137,7 +146,9 @@ def test_generalization(
     # Get training encodings
     dummy_train = torch.zeros(1, train_length, d_model)
     with torch.no_grad():
-        pe_train = pos_encoding(dummy_train).squeeze(0)
+        output_train = pos_encoding(dummy_train)  # (1, train_length, d_model)
+        pe_train = output_train - dummy_train  # (1, train_length, d_model)
+        pe_train = pe_train.squeeze(0)  # (train_length, d_model)
     
     train_mean = pe_train.mean(dim=0)
     train_std = pe_train.std(dim=0)
@@ -146,7 +157,9 @@ def test_generalization(
     for test_len in test_lengths:
         dummy_test = torch.zeros(1, test_len, d_model)
         with torch.no_grad():
-            pe_test = pos_encoding(dummy_test).squeeze(0)
+            output_test = pos_encoding(dummy_test)  # (1, test_len, d_model)
+            pe_test = output_test - dummy_test  # (1, test_len, d_model)
+            pe_test = pe_test.squeeze(0)  # (test_len, d_model)
         
         test_mean = pe_test.mean(dim=0)
         test_std = pe_test.std(dim=0)
@@ -187,7 +200,11 @@ def visualize_positional_encoding(
     dummy_input = torch.zeros(1, seq_length, d_model)
     
     with torch.no_grad():
-        pe = pos_encoding(dummy_input).squeeze(0).cpu().numpy()
+        # Get the positional encoding output
+        output = pos_encoding(dummy_input)  # (1, seq_length, d_model)
+        # Extract positional encodings by subtracting the input
+        pe = output - dummy_input  # (1, seq_length, d_model)
+        pe = pe.squeeze(0).cpu().numpy()  # (seq_length, d_model)
     
     # Create visualization
     fig, axes = plt.subplots(1, 2, figsize=figsize)
@@ -287,7 +304,9 @@ def compare_encodings(
         # Get encodings
         dummy_input = torch.zeros(1, seq_length, d_model)
         with torch.no_grad():
-            pe = encoding(dummy_input).squeeze(0).cpu().numpy()
+            output = encoding(dummy_input)  # (1, seq_length, d_model)
+            pe = output - dummy_input  # (1, seq_length, d_model)
+            pe = pe.squeeze(0).cpu().numpy()  # (seq_length, d_model)
         
         # Heatmap
         im = axes[idx].imshow(pe.T, aspect="auto", cmap="RdBu_r", interpolation="nearest")
