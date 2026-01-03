@@ -150,8 +150,9 @@ def test_generalization(
         pe_train = output_train - dummy_train  # (1, train_length, d_model)
         pe_train = pe_train.squeeze(0)  # (train_length, d_model)
     
-    train_mean = pe_train.mean(dim=0)
-    train_std = pe_train.std(dim=0)
+    # Compute global statistics for training data
+    train_mean = pe_train.mean().item()  # Scalar: average across all positions and dimensions
+    train_std = pe_train.std().item()    # Scalar: std across all positions and dimensions
     
     # Test on longer sequences
     for test_len in test_lengths:
@@ -161,12 +162,13 @@ def test_generalization(
             pe_test = output_test - dummy_test  # (1, test_len, d_model)
             pe_test = pe_test.squeeze(0)  # (test_len, d_model)
         
-        test_mean = pe_test.mean(dim=0)
-        test_std = pe_test.std(dim=0)
+        # Compute global statistics for test data
+        test_mean = pe_test.mean().item()  # Scalar
+        test_std = pe_test.std().item()    # Scalar
         
         # Measure difference from training distribution
-        mean_diff = torch.abs(test_mean - train_mean).mean().item()
-        std_diff = torch.abs(test_std - train_std).mean().item()
+        mean_diff = abs(test_mean - train_mean)
+        std_diff = abs(test_std - train_std)
         
         results["test_results"][test_len] = {
             "mean_diff": mean_diff,
