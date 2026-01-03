@@ -65,7 +65,7 @@ pip install -r requirements.txt
 !pip install torch numpy matplotlib
 
 # Clone the repo (optional)
-!git clone https://github.com/yourusername/learnable-positional-encoding.git
+!git clone https://github.com/hyunsule3/learnable-positional-encoding.git
 %cd learnable-positional-encoding
 ```
 
