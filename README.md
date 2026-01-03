@@ -36,8 +36,7 @@ learnable-positional-encoding/
 │   ├── __init__.py
 │   ├── positional_encoding.py    # Core classes
 │   └── utils.py                  # Visualization & analysis utilities
-├── examples/
-│   └── train_comparison.py       # Training comparison script
+├── colab_demo.ipynb              # Interactive Colab notebook
 ├── results/plots/                # Output directory
 ├── README.md                     # This file
 └── requirements.txt              # Dependencies
@@ -100,17 +99,19 @@ x = torch.randn(batch_size=32, seq_length=100, d_model=512)
 encoded = lspe(x)  # Shape: (32, 100, 512)
 ```
 
-### Run Training Comparison
+### Interactive Demo (Recommended)
 
-```bash
-python examples/train_comparison.py
-```
+Use the interactive Colab notebook for the best experience:
 
-This will:
-- Create dummy data
-- Train both methods
-- Compare performance
-- Test generalization
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hyunsule3/learnable-positional-encoding/blob/main/colab_demo.ipynb)
+
+The notebook includes:
+- Setup and installation
+- Both encoding methods
+- Side-by-side visualizations
+- Training comparison with loss curves
+- Generalization testing
+- Statistical analysis
 
 ## API Reference
 
