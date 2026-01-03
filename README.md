@@ -169,11 +169,9 @@ class LSPE(nn.Module):
 
 ### Visualization
 - `visualize_positional_encoding()` - Show encoding patterns as heatmap
-- `visualize_similarity_matrix()` - Show cosine similarity between positions
 - `compare_encodings()` - Compare multiple methods side-by-side
 
 ### Analysis
-- `compute_similarity_matrix()` - Calculate cosine similarity
 - `compute_orthogonality()` - Measure position distinctness
 - `test_generalization()` - Test on longer sequences
 - `get_encoding_stats()` - Get encoding statistics
@@ -291,58 +289,12 @@ output = lspe(x)
 print(output.shape)  # torch.Size([32, 100, 256])
 ```
 
-## Testing Your Installation
-
-```python
-import torch
-from src import LearnablePositionalEncoding, LSPE
-
-# Create instances
-lpe = LearnablePositionalEncoding(d_model=128, max_seq_length=100)
-lspe = LSPE(d_model=128, max_seq_length=100)
-
-# Test forward pass
-x = torch.randn(2, 50, 128)
-out_lpe = lpe(x)
-out_lspe = lspe(x)
-
-print(f"LearnablePositionalEncoding output shape: {out_lpe.shape}")
-print(f"LSPE output shape: {out_lspe.shape}")
-
-# Check parameters
-print(f"LearnablePositionalEncoding params: {sum(p.numel() for p in lpe.parameters()):,}")
-print(f"LSPE params: {sum(p.numel() for p in lspe.parameters()):,}")
-```
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Contributing
-
-Contributions are welcome! Feel free to submit issues or pull requests.
 
 ## References
 
 - Vaswani, A., et al. (2017). "Attention is All You Need." NeurIPS.
 - Shaw, P., Uszkoreit, J., & Vaswani, A. (2018). "Self-Attention with Relative Position Representations."
-
-## Frequently Asked Questions
-
-**Q: Which method should I use?**  
-A: Use LSPE unless you have specific reasons otherwise. It's more efficient and generalizes better.
-
-**Q: Can I use these in my Transformer?**  
-A: Yes! Just replace your positional encoding layer with either class.
-
-**Q: Does this work on GPU?**  
-A: Yes! Both methods work with `.to(device)` like any PyTorch module.
-
-**Q: How do I handle sequences longer than max_seq_length?**  
-A: Increase `max_seq_length` when creating the encoding. LSPE handles extrapolation well.
-
-**Q: Can I fine-tune these?**  
-A: Yes! Both are `nn.Module` subclasses with trainable parameters. Use standard PyTorch training.
+- Wang, et al. (2022). "ASimple yet Effective Learnable Positional Encoding Method for Improving Document Transformer Model"
 
 ---
 
